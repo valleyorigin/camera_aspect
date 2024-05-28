@@ -60,38 +60,36 @@ function resetAspectRatio() {
 }
 
 function takePhoto() {
-    const videoElement = document.getElementById('video');
+    const video = document.getElementById('video');
     const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    
+    const widthSliderValue = parseInt(document.getElementById('widthSlider').value);
+    const heightSliderValue = parseInt(document.getElementById('heightSlider').value);
+    
+    // 撮影時のズームを適用
+    const zoomedWidth = videoWidth * (widthSliderValue / 100);
+    const zoomedHeight = videoHeight * (heightSliderValue / 100);
+    
+    canvas.width = zoomedWidth;
+    canvas.height = zoomedHeight;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // 画像をcanvasに描画
+    ctx.drawImage(video, 0, 0, zoomedWidth, zoomedHeight);
+    
+    // Canvasから画像URLを取得
+    const dataURL = canvas.toDataURL('image/png');
 
-    // ビデオ要素から現在の縦横比の設定を取得
-    const widthSlider = document.getElementById('widthSlider').value;
-    const heightSlider = document.getElementById('heightSlider').value;
-
-    // キャンバスのサイズをビデオのサイズと縦横比に合わせて設定
-    const aspectRatio = videoElement.videoWidth / videoElement.videoHeight;
-    let canvasWidth, canvasHeight;
-    if (aspectRatio >= 1) {
-        canvasWidth = Math.min(videoElement.videoWidth, videoElement.videoHeight * (widthSlider / heightSlider));
-        canvasHeight = canvasWidth / aspectRatio;
-    } else {
-        canvasHeight = Math.min(videoElement.videoHeight, videoElement.videoWidth * (heightSlider / widthSlider));
-        canvasWidth = canvasHeight * aspectRatio;
-    }
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-
-    // ビデオフレームをキャプチャしてキャンバスに描画
-    context.drawImage(videoElement, 0, 0, canvasWidth, canvasHeight);
-
-    // キャンバスのデータを画像として取得し、ダウンロードする
-    const dataUrl = canvas.toDataURL('image/png', 1.0); // 1.0は品質を100%に設定
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = 'photo.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // 新しいタブを開いて画像を表示
+    const newTab = window.open();
+    newTab.document.write('<img src="' + dataURL + '" width="' + zoomedWidth + '" height="' + zoomedHeight + '"/>');
 }
 
+
+
+
+// ページ読み込み後にビデオを開始
 window.addEventListener('load', startVideo);
