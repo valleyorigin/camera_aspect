@@ -2,7 +2,7 @@ async function startVideo() {
     try {
         const constraints = {
             video: {
-                facingmode: { exact: "environment" },
+                facingMode: { exact: "user" },
                 width: { ideal: 1920 },
                 height: { ideal: 1080 }
             }
@@ -59,4 +59,5 @@ function resetAspectRatio() {
     currentHeight.textContent = '100%';
 }
 
-startVideo();
+// ページ読み込み後にビデオを開始
+window.addEventListener('load', startVideo);
