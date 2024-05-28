@@ -2,7 +2,7 @@ async function startVideo() {
     try {
         const constraints = {
             video: {
-                facingMode: { exact: "user" },
+                facingMode: { exact: "environment" },
                 width: { ideal: 1920 },
                 height: { ideal: 1080 }
             }
