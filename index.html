@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カメラ映像の縦横比変更</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        video {
+            background-color: black;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1, 1);
+            transform-origin: center center; /* スケールの基準点を設定 */
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .slider-container, .input-container {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        input[type="range"], input[type="number"] {
+            margin-left: 10px;
+            width: 300px;
+        }
+        button {
+            margin-top: 10px;
+        }
+        .current-values {
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video id="video" autoplay></video>
+    </div>
+    <div class="controls">
+        <div class="slider-container">
+            <label for="widthSlider">Width (%):</label>
+            <input type="range" id="widthSlider" min="50" max="150" value="100" oninput="updateSize()">
+        </div>
+        <div class="slider-container">
+            <label for="heightSlider">Height (%):</label>
+            <input type="range" id="heightSlider" min="50" max="150" value="100" oninput="updateSize()">
+        </div>
+        <div class="input-container">
+            <label for="minValue">Min (%):</label>
+            <input type="number" id="minValue" min="10" max="100" value="50" oninput="updateMinMax()">
+        </div>
+        <div class="input-container">
+            <label for="maxValue">Max (%):</label>
+            <input type="number" id="maxValue" min="100" max="300" value="150" oninput="updateMinMax()">
+        </div>
+        <button onclick="resetAspectRatio()">Reset Aspect Ratio</button>
+        <div class="current-values">
+            <div>Current Width: <span id="currentWidth">100%</span></div>
+            <div>Current Height: <span id="currentHeight">100%</span></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
