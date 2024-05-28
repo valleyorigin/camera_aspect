@@ -2,7 +2,7 @@ async function startVideo() {
     try {
         const constraints = {
             video: {
-                facingMode: { exact: "user" },
+                facingMode: { exact: "environment" },
                 width: { ideal: 1920 },
                 height: { ideal: 1080 }
             }
@@ -59,28 +59,39 @@ function resetAspectRatio() {
     currentHeight.textContent = '100%';
 }
 
-function capturePhoto() {
+function takePhoto() {
     const videoElement = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
+    const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    
+
+    // ビデオ要素から現在の縦横比の設定を取得
     const widthSlider = document.getElementById('widthSlider').value;
     const heightSlider = document.getElementById('heightSlider').value;
 
-    canvas.width = videoElement.videoWidth;
-    canvas.height = videoElement.videoHeight;
+    // キャンバスのサイズをビデオのサイズと縦横比に合わせて設定
+    const aspectRatio = videoElement.videoWidth / videoElement.videoHeight;
+    let canvasWidth, canvasHeight;
+    if (aspectRatio >= 1) {
+        canvasWidth = Math.min(videoElement.videoWidth, videoElement.videoHeight * (widthSlider / heightSlider));
+        canvasHeight = canvasWidth / aspectRatio;
+    } else {
+        canvasHeight = Math.min(videoElement.videoHeight, videoElement.videoWidth * (heightSlider / widthSlider));
+        canvasWidth = canvasHeight * aspectRatio;
+    }
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
-    // ビデオフレームをキャンバスに描画する際にスケーリングを適用
-    context.save();
-    context.scale(widthSlider / 100, heightSlider / 100);
-    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-    context.restore();
+    // ビデオフレームをキャプチャしてキャンバスに描画
+    context.drawImage(videoElement, 0, 0, canvasWidth, canvasHeight);
 
-    // 画像データを取得して新しいウィンドウで表示
-    const dataURL = canvas.toDataURL('image/png');
-    const newWindow = window.open();
-    newWindow.document.write(`<img src="${dataURL}" alt="Captured Photo">`);
+    // キャンバスのデータを画像として取得し、ダウンロードする
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = 'photo.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
-// ページ読み込み後にビデオを開始
 window.addEventListener('load', startVideo);
