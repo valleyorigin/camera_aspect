@@ -85,7 +85,7 @@ function takePhoto() {
     context.drawImage(videoElement, 0, 0, canvasWidth, canvasHeight);
 
     // キャンバスのデータを画像として取得し、ダウンロードする
-    const dataUrl = canvas.toDataURL('image/png');
+    const dataUrl = canvas.toDataURL('image/png', 1.0); // 1.0は品質を100%に設定
     const link = document.createElement('a');
     link.href = dataUrl;
     link.download = 'photo.png';
