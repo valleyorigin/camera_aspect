@@ -2,7 +2,7 @@ async function startVideo() {
     try {
         const constraints = {
             video: {
-                facingMode: { exact: "environment" },
+                facingMode: { exact: "user" },
                 width: { ideal: 1920 },
                 height: { ideal: 1080 }
             }
@@ -57,6 +57,29 @@ function resetAspectRatio() {
 
     currentWidth.textContent = '100%';
     currentHeight.textContent = '100%';
+}
+
+function capturePhoto() {
+    const videoElement = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    
+    const widthSlider = document.getElementById('widthSlider').value;
+    const heightSlider = document.getElementById('heightSlider').value;
+
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+
+    // ビデオフレームをキャンバスに描画する際にスケーリングを適用
+    context.save();
+    context.scale(widthSlider / 100, heightSlider / 100);
+    context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+    context.restore();
+
+    // 画像データを取得して新しいウィンドウで表示
+    const dataURL = canvas.toDataURL('image/png');
+    const newWindow = window.open();
+    newWindow.document.write(`<img src="${dataURL}" alt="Captured Photo">`);
 }
 
 // ページ読み込み後にビデオを開始
